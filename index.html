@@ -28,13 +28,13 @@
         // 1. タップで音を出して再生
         document.body.addEventListener('click', () => {
           overlay.style.display = 'none';
-          video.muted = false;
-          video.play().catch(e => console.log("再生エラー:", e));
+          video.muted = false; // 消音解除
+          video.play();        // 再生開始
         });
 
         // 2. 認識した瞬間に「カメラ前の動画」を表示する
         targetEntity.addEventListener("targetFound", event => {
-          console.log("ベルちゃん発見！画面に固定表示します");
+          console.log("発見！画面に固定表示します");
           arVideoInCamera.setAttribute("visible", true);
         });
       };
