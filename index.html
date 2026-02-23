@@ -23,45 +23,38 @@
         const overlay = document.querySelector('#overlay');
         const video = document.querySelector('#catVideo');
         const targetEntity = document.querySelector('#targetEntity');
-        const arVideoEntity = document.querySelector('#arVideoEntity');
-        const mainCamera = document.querySelector('#mainCamera');
+        const arVideoInCamera = document.querySelector('#arVideoInCamera');
 
-        // 1. タップで音を解禁
+        // 1. タップで音を出して再生
         document.body.addEventListener('click', () => {
           overlay.style.display = 'none';
           video.muted = false;
-          video.play();
+          video.play().catch(e => console.log("再生エラー:", e));
         });
 
-        // 2. 認識した瞬間の魔法
+        // 2. 認識した瞬間に「カメラ前の動画」を表示する
         targetEntity.addEventListener("targetFound", event => {
-          console.log("ベルちゃん発見！画面に固定します");
-          
-          // 動画のエンティティをカメラの子要素に移動させることで画面に固定！
-          mainCamera.appendChild(arVideoEntity);
-          
-          // カメラの真ん前（少し先）に配置して、見えるようにする
-          arVideoEntity.setAttribute("position", "0 0 -1"); 
-          arVideoEntity.setAttribute("visible", true);
+          console.log("ベルちゃん発見！画面に固定表示します");
+          arVideoInCamera.setAttribute("visible", true);
         });
       };
     </script>
 
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind; filterMinCF:0.001; filterBeta: 0.01;" 
-             vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
-      
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
       <a-assets>
         <video id="catVideo" src="./TaskL.mp4" preload="auto" loop="true" crossorigin="anonymous" webkit-playsinline playsinline muted></video>
       </a-assets>
 
-      <a-camera id="mainCamera" position="0 0 0" look-controls="enabled: false"></a-camera>
-
-      <a-entity id="targetEntity" mindar-image-target="targetIndex: 0">
-        <a-entity id="arVideoEntity" 
+      <a-camera id="mainCamera" position="0 0 0" look-controls="enabled: false">
+        <a-entity id="arVideoInCamera" 
                   geometry="primitive: plane; height: 0.6; width: 0.6"
                   material="shader: chromakey; src: #catVideo; color: 0.1 0.9 0.2"
+                  position="0 0 -1"
                   visible="false">
         </a-entity>
+      </a-camera>
+
+      <a-entity id="targetEntity" mindar-image-target="targetIndex: 0">
       </a-entity>
     </a-scene>
   </body>
