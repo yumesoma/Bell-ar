@@ -15,39 +15,45 @@
     </style>
   </head>
   <body>
-    <div id="overlay">画面をタップして<br>ベルちゃんを呼ぶ</div>
+    <div id="overlay">画面をタップして<br>ベルちゃんを呼ぶ<br>注意：音声が流れます</div>
 
     <script>
       window.onload = () => {
         const overlay = document.querySelector('#overlay');
         const video = document.querySelector('#catVideo');
         const targetEntity = document.querySelector('#targetEntity');
+        const stickyVideo = document.querySelector('#stickyVideo');
 
+        // 1. タップで音を解禁して再生開始
         document.body.addEventListener('click', () => {
           overlay.style.display = 'none';
-          video.muted = false;
+          video.muted = false; 
           video.play();
         });
 
-        // ターゲットを見つけた時に「消えない設定」にする
+        // 2. アクスタ（ターゲット）を見つけた瞬間に画面に表示
         targetEntity.addEventListener("targetFound", event => {
-          console.log("発見しました！");
+          console.log("ベルちゃん発見！画面に固定します");
+          stickyVideo.setAttribute("visible", true);
         });
       };
     </script>
 
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; stayVisible: true;" 
-             vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
-      
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
       <a-assets>
         <video id="catVideo" src="./TaskL.mp4" preload="auto" loop="true" crossorigin="anonymous" webkit-playsinline playsinline muted></video>
       </a-assets>
 
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+      <a-camera id="mainCamera" position="0 0 0" look-controls="enabled: false">
+        <a-video id="stickyVideo" 
+                 src="#catVideo" 
+                 position="0 0 -1" 
+                 width="0.8" height="0.6" 
+                 visible="false">
+        </a-video>
+      </a-camera>
 
-      <a-entity id="targetEntity" mindar-image-target="targetIndex: 0">
-        <a-video src="#catVideo" position="0 0 0" width="1" height="0.75"></a-video>
-      </a-entity>
+      <a-entity id="targetEntity" mindar-image-target="targetIndex: 0"></a-entity>
     </a-scene>
   </body>
 </html>
