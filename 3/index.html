@@ -10,37 +10,49 @@
       #overlay {
         position: absolute; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%;
         display: flex; align-items: center; justify-content: center;
-        background: rgba(0,0,0,0.6); color: white; font-family: sans-serif;
-        cursor: pointer; text-align: center; padding: 20px;
+        background: rgba(0,0,0,0.7); color: white; font-family: sans-serif;
+        cursor: pointer; text-align: center; font-weight: bold; font-size: 1.2em;
       }
     </style>
   </head>
   <body>
-    <div id="overlay">画面をタップして<br>ベルちゃんを召喚！</div>
+    <div id="overlay">【画面をタップ！】<br>ベルちゃんを特大召喚するZ！</div>
 
     <script>
       window.onload = () => {
         const overlay = document.querySelector('#overlay');
         const video = document.querySelector('#catVideo');
 
-        document.body.addEventListener('click', () => {
+        overlay.addEventListener('click', () => {
           overlay.style.display = 'none';
-          video.muted = false; 
-          video.play();
+          
+          // iPhoneの再生制限を突破する儀式
+          video.muted = true;
+          video.play().then(() => {
+            video.muted = false; 
+          });
         });
       };
     </script>
 
     <a-scene mindar-image="imageTargetSrc: ./targets.mind;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
       <a-assets>
-        <video id="catVideo" src="./prototype.mp4" preload="auto" loop="true" crossorigin="anonymous" webkit-playsinline playsinline muted></video>
+        <video id="catVideo" 
+               src="./prototype.mp4" 
+               preload="auto" 
+               loop="true" 
+               crossorigin="anonymous" 
+               webkit-playsinline 
+               playsinline 
+               muted="true">
+        </video>
       </a-assets>
 
-      <a-camera id="mainCamera" position="0 0 0" look-controls="enabled: false">
+      <a-camera position="0 0 0" look-controls="enabled: false">
         <a-entity id="stickyVideo" 
-                 geometry="primitive: plane; width: 0.6; height: 1.0;" 
+                 geometry="primitive: plane; width: 2.0; height: 3.56;" 
                  material="shader: chromakey; src: #catVideo; color: 0 1 0" 
-                 position="0 0 -1" 
+                 position="0 0 -2.5" 
                  visible="true">
         </a-entity>
       </a-camera>
