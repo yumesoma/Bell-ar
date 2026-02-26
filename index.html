@@ -4,6 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <script src="https://unpkg.com/aframe-chromakey-material/dist/aframe-chromakey-material.min.js"></script>
     
     <style>
       #overlay {
@@ -15,42 +16,50 @@
     </style>
   </head>
   <body>
-    <div id="overlay">画面をタップして<br>ベルちゃんを呼ぶ<br>注意：音声が流れます</div>
+    <div id="overlay">
+      画面をタップして<br>ベルちゃんを召喚！<br>
+      <small>（音楽が流れます）</small>
+    </div>
 
     <script>
       window.onload = () => {
         const overlay = document.querySelector('#overlay');
         const video = document.querySelector('#catVideo');
-        const targetEntity = document.querySelector('#targetEntity');
-        const stickyVideo = document.querySelector('#stickyVideo');
 
-        // 1. タップで音を解禁して再生開始
+        // 画面タップ時の処理
         document.body.addEventListener('click', () => {
           overlay.style.display = 'none';
+          // ミュート解除して再生
           video.muted = false; 
-          video.play();
-        });
-
-        // 2. アクスタ（ターゲット）を見つけた瞬間に画面に表示
-        targetEntity.addEventListener("targetFound", event => {
-          console.log("ベルちゃん発見！画面に固定します");
-          stickyVideo.setAttribute("visible", true);
+          video.play().then(() => {
+            console.log("動画再生成功！");
+          }).catch((err) => {
+            console.error("動画再生失敗:", err);
+          });
         });
       };
     </script>
 
     <a-scene mindar-image="imageTargetSrc: ./targets.mind;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
       <a-assets>
-        <video id="catVideo" src="./TaskL.mp4" preload="auto" loop="true" crossorigin="anonymous" webkit-playsinline playsinline muted></video>
+        <video id="catVideo" 
+               src="./prototype.mp4" 
+               preload="auto" 
+               loop="true" 
+               crossorigin="anonymous" 
+               webkit-playsinline 
+               playsinline 
+               muted>
+        </video>
       </a-assets>
 
       <a-camera id="mainCamera" position="0 0 0" look-controls="enabled: false">
-        <a-video id="stickyVideo" 
-                 src="#catVideo" 
+        <a-entity id="stickyVideo" 
+                 geometry="primitive: plane; width: 1.0; height: 0.56;" 
+                 material="shader: chromakey; src: #catVideo; color: 0 1 0" 
                  position="0 0 -1" 
-                 width="0.8" height="0.6" 
-                 visible="false">
-        </a-video>
+                 visible="true">
+        </a-entity>
       </a-camera>
 
       <a-entity id="targetEntity" mindar-image-target="targetIndex: 0"></a-entity>
