@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <script src="https://unpkg.com/aframe-chromakey-material/dist/aframe-chromakey-material.min.js"></script>
+    
+    <style>
+      #overlay {
+        position: absolute; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(0,0,0,0.6); color: white; font-family: sans-serif;
+        cursor: pointer; text-align: center; padding: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="overlay">画面をタップして<br>ベルちゃんを呼ぶ<br>注意：音声が流れます</div>
+
+    <script>
+      window.onload = () => {
+        const overlay = document.querySelector('#overlay');
+        const video = document.querySelector('#catVideo');
+        const targetEntity = document.querySelector('#targetEntity');
+        const stickyVideo = document.querySelector('#stickyVideo');
+
+        document.body.addEventListener('click', () => {
+          overlay.style.display = 'none';
+          video.muted = false; 
+          video.play();
+        });
+
+        targetEntity.addEventListener("targetFound", event => {
+          console.log("ベルちゃん発見！背景を透明にして表示します");
+          stickyVideo.setAttribute("visible", true);
+        });
+      };
+    </script>
+
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+      <a-assets>
+        <video id="catVideo" src="./prototype.mp4" preload="auto" loop="true" crossorigin="anonymous" webkit-playsinline playsinline muted></video>
+      </a-assets>
+
+      <a-camera id="mainCamera" position="0 0 0" look-controls="enabled: false">
+        <a-entity id="stickyVideo" 
+                 geometry="primitive: plane; width: 1.0; height: 0.56;" 
+                 material="shader: chromakey; src: #catVideo; color: 0 1 0" 
+                 position="0 0 -1" 
+                 visible="false">
+        </a-entity>
+      </a-camera>
+
+      <a-entity id="targetEntity" mindar-image-target="targetIndex: 0"></a-entity>
+    </a-scene>
+  </body>
+</html>
