@@ -16,28 +16,34 @@
     </style>
   </head>
   <body>
-    <div id="overlay">【ここをタップ！】<br>ベルちゃんを召喚するZ！</div>
+    <div id="overlay">【ここをタップ！】<br>召喚を開始するZ！</div>
 
     <script>
       window.onload = () => {
         const overlay = document.querySelector('#overlay');
         const video = document.querySelector('#catVideo');
-        const stickyVideo = document.querySelector('#stickyVideo'); // ← 追加！動画の板を取得
+        const stickyVideo = document.querySelector('#stickyVideo');
 
         overlay.addEventListener('click', () => {
           overlay.style.display = 'none';
           
+          // iPhone対策：まずはミュートで確実に再生させる
           video.muted = true;
-          // 動画の再生をスタート！
           video.play().then(() => {
-            // 【iPhone最強対策】再生が確実に始まってから、後出しでクロマキーの魔法をかける！
-            stickyVideo.setAttribute('material', 'shader: chromakey; src: #catVideo; color: 0 1 0; opacity: 0.99');
+            // 再生が始まったら「透明化の魔法（マテリアル）」を後から流し込む
+            stickyVideo.setAttribute('material', {
+              shader: 'chromakey',
+              src: '#catVideo',
+              color: {r: 0, g: 1, b: 0},
+              opacity: 0.99
+            });
+            // 魔法がかかったら表示をONにする
+            stickyVideo.setAttribute('visible', 'true');
             
-            // そのあとで音を出す
+            // 0.1秒後に音を解禁（iPhoneのバグ回避）
             setTimeout(() => { video.muted = false; }, 100);
-            console.log("iPhoneで再生＆透明化の魔法成功！");
           }).catch(err => {
-            console.log("再生エラー:", err);
+            alert("再生エラー: " + err);
           });
         });
       };
@@ -60,7 +66,7 @@
         <a-entity id="stickyVideo" 
                  geometry="primitive: plane; width: 2.0; height: 3.56;" 
                  position="0 0 -2.5" 
-                 visible="true">
+                 visible="false">
         </a-entity>
       </a-camera>
 
