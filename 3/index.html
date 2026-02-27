@@ -16,7 +16,7 @@
     </style>
   </head>
   <body>
-    <div id="ui">【画面をタップ！】<br>召喚を開始するZ！</div>
+    <div id="ui">【画面をタップ！】<br>音楽が流れるZ！</div>
 
     <a-scene mindar-image="imageTargetSrc: ./targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
       
@@ -28,7 +28,7 @@
 
       <a-entity id="target" mindar-image-target="targetIndex: 0">
         <a-entity id="bellEntity"
-                 geometry="primitive: plane; width: 1.0; height: 1.333;" 
+                 geometry="primitive: plane; width: 1.0; height: 0.5625;" 
                  material="shader: chromakey; src: #vid; color: 0 1 0; opacity: 0.99" 
                  position="0 0 0">
         </a-entity>
